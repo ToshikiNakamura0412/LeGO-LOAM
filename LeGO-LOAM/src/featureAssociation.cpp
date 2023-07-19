@@ -201,7 +201,7 @@ public:
         pubLaserCloudSurfLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_surf_last", 2);
         pubOutlierCloudLast = nh.advertise<sensor_msgs::PointCloud2>("/outlier_cloud_last", 2);
         pubLaserOdometry = nh.advertise<nav_msgs::Odometry> ("/laser_odom_to_init", 5);
-        
+
         initializationValue();
     }
 
@@ -302,12 +302,12 @@ public:
         kdtreeCornerLast.reset(new pcl::KdTreeFLANN<PointType>());
         kdtreeSurfLast.reset(new pcl::KdTreeFLANN<PointType>());
 
-        laserOdometry.header.frame_id = "/camera_init";
-        laserOdometry.child_frame_id = "/laser_odom";
+        laserOdometry.header.frame_id = "camera_init";
+        laserOdometry.child_frame_id = "laser_odom";
 
-        laserOdometryTrans.frame_id_ = "/camera_init";
-        laserOdometryTrans.child_frame_id_ = "/laser_odom";
-        
+        laserOdometryTrans.frame_id_ = "camera_init";
+        laserOdometryTrans.child_frame_id_ = "laser_odom";
+
         isDegenerate = false;
         matP = cv::Mat(6, 6, CV_32F, cv::Scalar::all(0));
 
@@ -543,12 +543,12 @@ public:
 
                     imuShiftXCur = imuShiftX[imuPointerFront];
                     imuShiftYCur = imuShiftY[imuPointerFront];
-                    imuShiftZCur = imuShiftZ[imuPointerFront];   
+                    imuShiftZCur = imuShiftZ[imuPointerFront];
                 } else {
                     int imuPointerBack = (imuPointerFront + imuQueLength - 1) % imuQueLength;
-                    float ratioFront = (timeScanCur + pointTime - imuTime[imuPointerBack]) 
+                    float ratioFront = (timeScanCur + pointTime - imuTime[imuPointerBack])
                                                      / (imuTime[imuPointerFront] - imuTime[imuPointerBack]);
-                    float ratioBack = (imuTime[imuPointerFront] - timeScanCur - pointTime) 
+                    float ratioBack = (imuTime[imuPointerFront] - timeScanCur - pointTime)
                                                     / (imuTime[imuPointerFront] - imuTime[imuPointerBack]);
 
                     imuRollCur = imuRoll[imuPointerFront] * ratioFront + imuRoll[imuPointerBack] * ratioBack;
@@ -589,9 +589,9 @@ public:
                         imuAngularRotationZCur = imuAngularRotationZ[imuPointerFront];
                     }else{
                         int imuPointerBack = (imuPointerFront + imuQueLength - 1) % imuQueLength;
-                        float ratioFront = (timeScanCur + pointTime - imuTime[imuPointerBack]) 
+                        float ratioFront = (timeScanCur + pointTime - imuTime[imuPointerBack])
                                                          / (imuTime[imuPointerFront] - imuTime[imuPointerBack]);
-                        float ratioBack = (imuTime[imuPointerFront] - timeScanCur - pointTime) 
+                        float ratioBack = (imuTime[imuPointerFront] - timeScanCur - pointTime)
                                                         / (imuTime[imuPointerFront] - imuTime[imuPointerBack]);
                         imuAngularRotationXCur = imuAngularRotationX[imuPointerFront] * ratioFront + imuAngularRotationX[imuPointerBack] * ratioBack;
                         imuAngularRotationYCur = imuAngularRotationY[imuPointerFront] * ratioFront + imuAngularRotationY[imuPointerBack] * ratioBack;
@@ -628,7 +628,7 @@ public:
                             + segInfo.segmentedCloudRange[i-1] - segInfo.segmentedCloudRange[i] * 10
                             + segInfo.segmentedCloudRange[i+1] + segInfo.segmentedCloudRange[i+2]
                             + segInfo.segmentedCloudRange[i+3] + segInfo.segmentedCloudRange[i+4]
-                            + segInfo.segmentedCloudRange[i+5];            
+                            + segInfo.segmentedCloudRange[i+5];
 
             cloudCurvature[i] = diffRange*diffRange;
 
@@ -704,7 +704,7 @@ public:
                     if (cloudNeighborPicked[ind] == 0 &&
                         cloudCurvature[ind] > edgeThreshold &&
                         segInfo.segmentedCloudGroundFlag[ind] == false) {
-                    
+
                         largestPickedNum++;
                         if (largestPickedNum <= 2) {
                             cloudLabel[ind] = 2;
@@ -790,28 +790,28 @@ public:
 	    if (pubCornerPointsSharp.getNumSubscribers() != 0){
 	        pcl::toROSMsg(*cornerPointsSharp, laserCloudOutMsg);
 	        laserCloudOutMsg.header.stamp = cloudHeader.stamp;
-	        laserCloudOutMsg.header.frame_id = "/camera";
+	        laserCloudOutMsg.header.frame_id = "camera";
 	        pubCornerPointsSharp.publish(laserCloudOutMsg);
 	    }
 
 	    if (pubCornerPointsLessSharp.getNumSubscribers() != 0){
 	        pcl::toROSMsg(*cornerPointsLessSharp, laserCloudOutMsg);
 	        laserCloudOutMsg.header.stamp = cloudHeader.stamp;
-	        laserCloudOutMsg.header.frame_id = "/camera";
+	        laserCloudOutMsg.header.frame_id = "camera";
 	        pubCornerPointsLessSharp.publish(laserCloudOutMsg);
 	    }
 
 	    if (pubSurfPointsFlat.getNumSubscribers() != 0){
 	        pcl::toROSMsg(*surfPointsFlat, laserCloudOutMsg);
 	        laserCloudOutMsg.header.stamp = cloudHeader.stamp;
-	        laserCloudOutMsg.header.frame_id = "/camera";
+	        laserCloudOutMsg.header.frame_id = "camera";
 	        pubSurfPointsFlat.publish(laserCloudOutMsg);
 	    }
 
 	    if (pubSurfPointsLessFlat.getNumSubscribers() != 0){
 	        pcl::toROSMsg(*surfPointsLessFlat, laserCloudOutMsg);
 	        laserCloudOutMsg.header.stamp = cloudHeader.stamp;
-	        laserCloudOutMsg.header.frame_id = "/camera";
+	        laserCloudOutMsg.header.frame_id = "camera";
 	        pubSurfPointsLessFlat.publish(laserCloudOutMsg);
 	    }
     }
@@ -924,9 +924,9 @@ public:
         float y6 = sin(rz) * x5 + cos(rz) * y5 + ty;
         float z6 = z5 + tz;
 
-        float x7 = cosImuRollStart * (x6 - imuShiftFromStartX) 
+        float x7 = cosImuRollStart * (x6 - imuShiftFromStartX)
                  - sinImuRollStart * (y6 - imuShiftFromStartY);
-        float y7 = sinImuRollStart * (x6 - imuShiftFromStartX) 
+        float y7 = sinImuRollStart * (x6 - imuShiftFromStartX)
                  + cosImuRollStart * (y6 - imuShiftFromStartY);
         float z7 = z6 - imuShiftFromStartZ;
 
@@ -952,7 +952,7 @@ public:
         po->intensity = int(pi->intensity);
     }
 
-    void PluginIMURotation(float bcx, float bcy, float bcz, float blx, float bly, float blz, 
+    void PluginIMURotation(float bcx, float bcy, float bcz, float blx, float bly, float blz,
                            float alx, float aly, float alz, float &acx, float &acy, float &acz)
     {
         float sbcx = sin(bcx);
@@ -976,57 +976,57 @@ public:
         float salz = sin(alz);
         float calz = cos(alz);
 
-        float srx = -sbcx*(salx*sblx + calx*caly*cblx*cbly + calx*cblx*saly*sbly) 
-                  - cbcx*cbcz*(calx*saly*(cbly*sblz - cblz*sblx*sbly) 
-                  - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx) 
-                  - cbcx*sbcz*(calx*caly*(cblz*sbly - cbly*sblx*sblz) 
+        float srx = -sbcx*(salx*sblx + calx*caly*cblx*cbly + calx*cblx*saly*sbly)
+                  - cbcx*cbcz*(calx*saly*(cbly*sblz - cblz*sblx*sbly)
+                  - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx)
+                  - cbcx*sbcz*(calx*caly*(cblz*sbly - cbly*sblx*sblz)
                   - calx*saly*(cbly*cblz + sblx*sbly*sblz) + cblx*salx*sblz);
         acx = -asin(srx);
 
-        float srycrx = (cbcy*sbcz - cbcz*sbcx*sbcy)*(calx*saly*(cbly*sblz - cblz*sblx*sbly) 
-                     - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx) 
-                     - (cbcy*cbcz + sbcx*sbcy*sbcz)*(calx*caly*(cblz*sbly - cbly*sblx*sblz) 
-                     - calx*saly*(cbly*cblz + sblx*sbly*sblz) + cblx*salx*sblz) 
+        float srycrx = (cbcy*sbcz - cbcz*sbcx*sbcy)*(calx*saly*(cbly*sblz - cblz*sblx*sbly)
+                     - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx)
+                     - (cbcy*cbcz + sbcx*sbcy*sbcz)*(calx*caly*(cblz*sbly - cbly*sblx*sblz)
+                     - calx*saly*(cbly*cblz + sblx*sbly*sblz) + cblx*salx*sblz)
                      + cbcx*sbcy*(salx*sblx + calx*caly*cblx*cbly + calx*cblx*saly*sbly);
-        float crycrx = (cbcz*sbcy - cbcy*sbcx*sbcz)*(calx*caly*(cblz*sbly - cbly*sblx*sblz) 
-                     - calx*saly*(cbly*cblz + sblx*sbly*sblz) + cblx*salx*sblz) 
-                     - (sbcy*sbcz + cbcy*cbcz*sbcx)*(calx*saly*(cbly*sblz - cblz*sblx*sbly) 
-                     - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx) 
+        float crycrx = (cbcz*sbcy - cbcy*sbcx*sbcz)*(calx*caly*(cblz*sbly - cbly*sblx*sblz)
+                     - calx*saly*(cbly*cblz + sblx*sbly*sblz) + cblx*salx*sblz)
+                     - (sbcy*sbcz + cbcy*cbcz*sbcx)*(calx*saly*(cbly*sblz - cblz*sblx*sbly)
+                     - calx*caly*(sbly*sblz + cbly*cblz*sblx) + cblx*cblz*salx)
                      + cbcx*cbcy*(salx*sblx + calx*caly*cblx*cbly + calx*cblx*saly*sbly);
         acy = atan2(srycrx / cos(acx), crycrx / cos(acx));
-        
-        float srzcrx = sbcx*(cblx*cbly*(calz*saly - caly*salx*salz) 
-                     - cblx*sbly*(caly*calz + salx*saly*salz) + calx*salz*sblx) 
-                     - cbcx*cbcz*((caly*calz + salx*saly*salz)*(cbly*sblz - cblz*sblx*sbly) 
-                     + (calz*saly - caly*salx*salz)*(sbly*sblz + cbly*cblz*sblx) 
-                     - calx*cblx*cblz*salz) + cbcx*sbcz*((caly*calz + salx*saly*salz)*(cbly*cblz 
-                     + sblx*sbly*sblz) + (calz*saly - caly*salx*salz)*(cblz*sbly - cbly*sblx*sblz) 
+
+        float srzcrx = sbcx*(cblx*cbly*(calz*saly - caly*salx*salz)
+                     - cblx*sbly*(caly*calz + salx*saly*salz) + calx*salz*sblx)
+                     - cbcx*cbcz*((caly*calz + salx*saly*salz)*(cbly*sblz - cblz*sblx*sbly)
+                     + (calz*saly - caly*salx*salz)*(sbly*sblz + cbly*cblz*sblx)
+                     - calx*cblx*cblz*salz) + cbcx*sbcz*((caly*calz + salx*saly*salz)*(cbly*cblz
+                     + sblx*sbly*sblz) + (calz*saly - caly*salx*salz)*(cblz*sbly - cbly*sblx*sblz)
                      + calx*cblx*salz*sblz);
-        float crzcrx = sbcx*(cblx*sbly*(caly*salz - calz*salx*saly) 
-                     - cblx*cbly*(saly*salz + caly*calz*salx) + calx*calz*sblx) 
-                     + cbcx*cbcz*((saly*salz + caly*calz*salx)*(sbly*sblz + cbly*cblz*sblx) 
-                     + (caly*salz - calz*salx*saly)*(cbly*sblz - cblz*sblx*sbly) 
-                     + calx*calz*cblx*cblz) - cbcx*sbcz*((saly*salz + caly*calz*salx)*(cblz*sbly 
-                     - cbly*sblx*sblz) + (caly*salz - calz*salx*saly)*(cbly*cblz + sblx*sbly*sblz) 
+        float crzcrx = sbcx*(cblx*sbly*(caly*salz - calz*salx*saly)
+                     - cblx*cbly*(saly*salz + caly*calz*salx) + calx*calz*sblx)
+                     + cbcx*cbcz*((saly*salz + caly*calz*salx)*(sbly*sblz + cbly*cblz*sblx)
+                     + (caly*salz - calz*salx*saly)*(cbly*sblz - cblz*sblx*sbly)
+                     + calx*calz*cblx*cblz) - cbcx*sbcz*((saly*salz + caly*calz*salx)*(cblz*sbly
+                     - cbly*sblx*sblz) + (caly*salz - calz*salx*saly)*(cbly*cblz + sblx*sbly*sblz)
                      - calx*calz*cblx*sblz);
         acz = atan2(srzcrx / cos(acx), crzcrx / cos(acx));
     }
 
-    void AccumulateRotation(float cx, float cy, float cz, float lx, float ly, float lz, 
+    void AccumulateRotation(float cx, float cy, float cz, float lx, float ly, float lz,
                             float &ox, float &oy, float &oz)
     {
         float srx = cos(lx)*cos(cx)*sin(ly)*sin(cz) - cos(cx)*cos(cz)*sin(lx) - cos(lx)*cos(ly)*sin(cx);
         ox = -asin(srx);
 
-        float srycrx = sin(lx)*(cos(cy)*sin(cz) - cos(cz)*sin(cx)*sin(cy)) + cos(lx)*sin(ly)*(cos(cy)*cos(cz) 
+        float srycrx = sin(lx)*(cos(cy)*sin(cz) - cos(cz)*sin(cx)*sin(cy)) + cos(lx)*sin(ly)*(cos(cy)*cos(cz)
                      + sin(cx)*sin(cy)*sin(cz)) + cos(lx)*cos(ly)*cos(cx)*sin(cy);
-        float crycrx = cos(lx)*cos(ly)*cos(cx)*cos(cy) - cos(lx)*sin(ly)*(cos(cz)*sin(cy) 
+        float crycrx = cos(lx)*cos(ly)*cos(cx)*cos(cy) - cos(lx)*sin(ly)*(cos(cz)*sin(cy)
                      - cos(cy)*sin(cx)*sin(cz)) - sin(lx)*(sin(cy)*sin(cz) + cos(cy)*cos(cz)*sin(cx));
         oy = atan2(srycrx / cos(ox), crycrx / cos(ox));
 
-        float srzcrx = sin(cx)*(cos(lz)*sin(ly) - cos(ly)*sin(lx)*sin(lz)) + cos(cx)*sin(cz)*(cos(ly)*cos(lz) 
+        float srzcrx = sin(cx)*(cos(lz)*sin(ly) - cos(ly)*sin(lx)*sin(lz)) + cos(cx)*sin(cz)*(cos(ly)*cos(lz)
                      + sin(lx)*sin(ly)*sin(lz)) + cos(lx)*cos(cx)*cos(cz)*sin(lz);
-        float crzcrx = cos(lx)*cos(lz)*cos(cx)*cos(cz) - cos(cx)*sin(cz)*(cos(ly)*sin(lz) 
+        float crzcrx = cos(lx)*cos(lz)*cos(cx)*cos(cz) - cos(cx)*sin(cz)*(cos(ly)*sin(lz)
                      - cos(lz)*sin(lx)*sin(ly)) - sin(cx)*(sin(ly)*sin(lz) + cos(ly)*cos(lz)*sin(lx));
         oz = atan2(srzcrx / cos(ox), crzcrx / cos(ox));
     }
@@ -1053,7 +1053,7 @@ public:
 
                 kdtreeCornerLast->nearestKSearch(pointSel, 1, pointSearchInd, pointSearchSqDis);
                 int closestPointInd = -1, minPointInd2 = -1;
-                
+
                 if (pointSearchSqDis[0] < nearestFeatureSearchSqDist) {
                     closestPointInd = pointSearchInd[0];
                     int closestPointScan = int(laserCloudCornerLast->points[closestPointInd].intensity);
@@ -1064,11 +1064,11 @@ public:
                             break;
                         }
 
-                        pointSqDis = (laserCloudCornerLast->points[j].x - pointSel.x) * 
-                                     (laserCloudCornerLast->points[j].x - pointSel.x) + 
-                                     (laserCloudCornerLast->points[j].y - pointSel.y) * 
-                                     (laserCloudCornerLast->points[j].y - pointSel.y) + 
-                                     (laserCloudCornerLast->points[j].z - pointSel.z) * 
+                        pointSqDis = (laserCloudCornerLast->points[j].x - pointSel.x) *
+                                     (laserCloudCornerLast->points[j].x - pointSel.x) +
+                                     (laserCloudCornerLast->points[j].y - pointSel.y) *
+                                     (laserCloudCornerLast->points[j].y - pointSel.y) +
+                                     (laserCloudCornerLast->points[j].z - pointSel.z) *
                                      (laserCloudCornerLast->points[j].z - pointSel.z);
 
                         if (int(laserCloudCornerLast->points[j].intensity) > closestPointScan) {
@@ -1083,11 +1083,11 @@ public:
                             break;
                         }
 
-                        pointSqDis = (laserCloudCornerLast->points[j].x - pointSel.x) * 
-                                     (laserCloudCornerLast->points[j].x - pointSel.x) + 
-                                     (laserCloudCornerLast->points[j].y - pointSel.y) * 
-                                     (laserCloudCornerLast->points[j].y - pointSel.y) + 
-                                     (laserCloudCornerLast->points[j].z - pointSel.z) * 
+                        pointSqDis = (laserCloudCornerLast->points[j].x - pointSel.x) *
+                                     (laserCloudCornerLast->points[j].x - pointSel.x) +
+                                     (laserCloudCornerLast->points[j].y - pointSel.y) *
+                                     (laserCloudCornerLast->points[j].y - pointSel.y) +
+                                     (laserCloudCornerLast->points[j].z - pointSel.z) *
                                      (laserCloudCornerLast->points[j].z - pointSel.z);
 
                         if (int(laserCloudCornerLast->points[j].intensity) < closestPointScan) {
@@ -1140,11 +1140,11 @@ public:
                 }
 
                 if (s > 0.1 && ld2 != 0) {
-                    coeff.x = s * la; 
+                    coeff.x = s * la;
                     coeff.y = s * lb;
                     coeff.z = s * lc;
                     coeff.intensity = s * ld2;
-                  
+
                     laserCloudOri->push_back(cornerPointsSharp->points[i]);
                     coeffSel->push_back(coeff);
                 }
@@ -1175,11 +1175,11 @@ public:
                             break;
                         }
 
-                        pointSqDis = (laserCloudSurfLast->points[j].x - pointSel.x) * 
-                                     (laserCloudSurfLast->points[j].x - pointSel.x) + 
-                                     (laserCloudSurfLast->points[j].y - pointSel.y) * 
-                                     (laserCloudSurfLast->points[j].y - pointSel.y) + 
-                                     (laserCloudSurfLast->points[j].z - pointSel.z) * 
+                        pointSqDis = (laserCloudSurfLast->points[j].x - pointSel.x) *
+                                     (laserCloudSurfLast->points[j].x - pointSel.x) +
+                                     (laserCloudSurfLast->points[j].y - pointSel.y) *
+                                     (laserCloudSurfLast->points[j].y - pointSel.y) +
+                                     (laserCloudSurfLast->points[j].z - pointSel.z) *
                                      (laserCloudSurfLast->points[j].z - pointSel.z);
 
                         if (int(laserCloudSurfLast->points[j].intensity) <= closestPointScan) {
@@ -1199,11 +1199,11 @@ public:
                             break;
                         }
 
-                        pointSqDis = (laserCloudSurfLast->points[j].x - pointSel.x) * 
-                                     (laserCloudSurfLast->points[j].x - pointSel.x) + 
-                                     (laserCloudSurfLast->points[j].y - pointSel.y) * 
-                                     (laserCloudSurfLast->points[j].y - pointSel.y) + 
-                                     (laserCloudSurfLast->points[j].z - pointSel.z) * 
+                        pointSqDis = (laserCloudSurfLast->points[j].x - pointSel.x) *
+                                     (laserCloudSurfLast->points[j].x - pointSel.x) +
+                                     (laserCloudSurfLast->points[j].y - pointSel.y) *
+                                     (laserCloudSurfLast->points[j].y - pointSel.y) +
+                                     (laserCloudSurfLast->points[j].z - pointSel.z) *
                                      (laserCloudSurfLast->points[j].z - pointSel.z);
 
                         if (int(laserCloudSurfLast->points[j].intensity) >= closestPointScan) {
@@ -1231,11 +1231,11 @@ public:
                 tripod2 = laserCloudSurfLast->points[pointSearchSurfInd2[i]];
                 tripod3 = laserCloudSurfLast->points[pointSearchSurfInd3[i]];
 
-                float pa = (tripod2.y - tripod1.y) * (tripod3.z - tripod1.z) 
+                float pa = (tripod2.y - tripod1.y) * (tripod3.z - tripod1.z)
                          - (tripod3.y - tripod1.y) * (tripod2.z - tripod1.z);
-                float pb = (tripod2.z - tripod1.z) * (tripod3.x - tripod1.x) 
+                float pb = (tripod2.z - tripod1.z) * (tripod3.x - tripod1.x)
                          - (tripod3.z - tripod1.z) * (tripod2.x - tripod1.x);
-                float pc = (tripod2.x - tripod1.x) * (tripod3.y - tripod1.y) 
+                float pc = (tripod2.x - tripod1.x) * (tripod3.y - tripod1.y)
                          - (tripod3.x - tripod1.x) * (tripod2.y - tripod1.y);
                 float pd = -(pa * tripod1.x + pb * tripod1.y + pc * tripod1.z);
 
@@ -1621,13 +1621,13 @@ public:
         sensor_msgs::PointCloud2 laserCloudCornerLast2;
         pcl::toROSMsg(*laserCloudCornerLast, laserCloudCornerLast2);
         laserCloudCornerLast2.header.stamp = cloudHeader.stamp;
-        laserCloudCornerLast2.header.frame_id = "/camera";
+        laserCloudCornerLast2.header.frame_id = "camera";
         pubLaserCloudCornerLast.publish(laserCloudCornerLast2);
 
         sensor_msgs::PointCloud2 laserCloudSurfLast2;
         pcl::toROSMsg(*laserCloudSurfLast, laserCloudSurfLast2);
         laserCloudSurfLast2.header.stamp = cloudHeader.stamp;
-        laserCloudSurfLast2.header.frame_id = "/camera";
+        laserCloudSurfLast2.header.frame_id = "camera";
         pubLaserCloudSurfLast.publish(laserCloudSurfLast2);
 
         transformSum[0] += imuPitchStart;
@@ -1655,7 +1655,7 @@ public:
             transformCur[1] = - imuAngularFromStartZ;
             transformCur[2] = - imuAngularFromStartX;
         }
-        
+
         if (imuVeloFromStartX != 0 || imuVeloFromStartY != 0 || imuVeloFromStartZ != 0){
             transformCur[3] -= imuVeloFromStartX * scanPeriod;
             transformCur[4] -= imuVeloFromStartY * scanPeriod;
@@ -1696,12 +1696,12 @@ public:
 
     void integrateTransformation(){
         float rx, ry, rz, tx, ty, tz;
-        AccumulateRotation(transformSum[0], transformSum[1], transformSum[2], 
+        AccumulateRotation(transformSum[0], transformSum[1], transformSum[2],
                            -transformCur[0], -transformCur[1], -transformCur[2], rx, ry, rz);
 
-        float x1 = cos(rz) * (transformCur[3] - imuShiftFromStartX) 
+        float x1 = cos(rz) * (transformCur[3] - imuShiftFromStartX)
                  - sin(rz) * (transformCur[4] - imuShiftFromStartY);
-        float y1 = sin(rz) * (transformCur[3] - imuShiftFromStartX) 
+        float y1 = sin(rz) * (transformCur[3] - imuShiftFromStartX)
                  + cos(rz) * (transformCur[4] - imuShiftFromStartY);
         float z1 = transformCur[5] - imuShiftFromStartZ;
 
@@ -1713,7 +1713,7 @@ public:
         ty = transformSum[4] - y2;
         tz = transformSum[5] - (-sin(ry) * x2 + cos(ry) * z2);
 
-        PluginIMURotation(rx, ry, rz, imuPitchStart, imuYawStart, imuRollStart, 
+        PluginIMURotation(rx, ry, rz, imuPitchStart, imuYawStart, imuRollStart,
                           imuPitchLast, imuYawLast, imuRollLast, rx, ry, rz);
 
         transformSum[0] = rx;
@@ -1797,19 +1797,19 @@ public:
             sensor_msgs::PointCloud2 outlierCloudLast2;
             pcl::toROSMsg(*outlierCloud, outlierCloudLast2);
             outlierCloudLast2.header.stamp = cloudHeader.stamp;
-            outlierCloudLast2.header.frame_id = "/camera";
+            outlierCloudLast2.header.frame_id = "camera";
             pubOutlierCloudLast.publish(outlierCloudLast2);
 
             sensor_msgs::PointCloud2 laserCloudCornerLast2;
             pcl::toROSMsg(*laserCloudCornerLast, laserCloudCornerLast2);
             laserCloudCornerLast2.header.stamp = cloudHeader.stamp;
-            laserCloudCornerLast2.header.frame_id = "/camera";
+            laserCloudCornerLast2.header.frame_id = "camera";
             pubLaserCloudCornerLast.publish(laserCloudCornerLast2);
 
             sensor_msgs::PointCloud2 laserCloudSurfLast2;
             pcl::toROSMsg(*laserCloudSurfLast, laserCloudSurfLast2);
             laserCloudSurfLast2.header.stamp = cloudHeader.stamp;
-            laserCloudSurfLast2.header.frame_id = "/camera";
+            laserCloudSurfLast2.header.frame_id = "camera";
             pubLaserCloudSurfLast.publish(laserCloudSurfLast2);
         }
     }
@@ -1839,7 +1839,7 @@ public:
         extractFeatures();
 
         publishCloud(); // cloud for visualization
-	
+
         /**
 		2. Feature Association
         */
@@ -1880,7 +1880,7 @@ int main(int argc, char** argv)
 
         rate.sleep();
     }
-    
+
     ros::spin();
     return 0;
 }
