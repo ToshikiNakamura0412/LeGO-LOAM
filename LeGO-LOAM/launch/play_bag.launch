@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="bagfile" default=""/>
+    <include file="$(find lego_loam)/launch/run.launch"/>
+    <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch"/>
+    <node pkg="rosbag" type="play" name="play" args="$(arg bagfile) --clock --topics /velodyne_packets"/>
+</launch>
